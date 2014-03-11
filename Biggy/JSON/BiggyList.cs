@@ -109,11 +109,15 @@ namespace Biggy.JSON
 
       public bool FlushToDisk() {
         var json = JsonConvert.SerializeObject(this);
-        var cleaned = json.Replace("[", "").Replace("]", "").Replace(",", Environment.NewLine);
-        var buff = Encoding.Default.GetBytes(json);
-        using (var fs = File.OpenWrite(this.DbPath)) {
-          fs.WriteAsync(buff, 0, buff.Length);
+        var sb = new StringBuilder();
+
+        foreach (var item in this) {
+          sb.Append(JsonConvert.SerializeObject(item));
+          sb.Append(Environment.NewLine);
         }
+
+        File.WriteAllText(this.DbPath, sb.ToString());
+
         return true;
       }
 
